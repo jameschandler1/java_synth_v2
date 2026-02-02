@@ -55,7 +55,8 @@ Features:
 
 GUI:
 
-<img width="400" alt="GUI" src="https://github.com/user-attachments/assets/a2899606-84b6-4e6d-a8ed-f2707e3980a8" />
+<img width="600" alt="GUI" src="https://github.com/user-attachments/assets/6540fcc4-67d6-4572-940a-dc8609ffe3a0" />
+
 
 
 Junit:
