@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"<Unnamed>","l":"Envelope"},{"p":"<Unnamed>","l":"Filter"},{"p":"<Unnamed>","l":"KeyboardController"},{"p":"<Unnamed>","l":"OscType"},{"p":"<Unnamed>","l":"Synth"},{"p":"<Unnamed>","l":"SynthUI"},{"p":"<Unnamed>","l":"SynthVoice"}];updateSearchResults();

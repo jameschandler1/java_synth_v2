@@ -1,0 +1,164 @@
+@startuml
+
+' =========================
+' ENUM
+' =========================
+enum OscType {
+    SINE("sine")
+    SQUARE("square")
+    SAWTOOTH("sawtooth")
+    TRIANGLE("triangle")
+
+    - name : String
+    - OscType(String) 
+    + toString() : String
+}
+
+' =========================
+' ENVELOPE
+' =========================
+class Envelope {
+    - envelope : EnvelopeDAHDSR
+    + Envelope(Synthesizer)
+    + setAttack(double)
+    + getAttack() : double
+    + setDecay(double)
+    + getDecay() : double
+    + setSustain(double)
+    + getSustain() : double
+    + setRelease(double)
+    + getRelease() : double
+    + setAmplitude(double)
+    + getAmplitude() : double
+    + setVelocity(double)
+    + trigger(boolean)
+    + get() : EnvelopeDAHDSR
+}
+
+' =========================
+' FILTER
+' =========================
+class Filter {
+    - filter : FilterStateVariable
+    - filterCutoffRamp : LinearRamp
+    - filterResonanceRamp : LinearRamp
+    + Filter(Synthesizer)
+    + setFrequency(double)
+    + setFilterType(String)
+    + setFilterCutoff(double)
+    + setFilterResonance(double)
+    + get() : FilterStateVariable
+}
+
+' =========================
+' KEYBOARDCONTROLLER
+' =========================
+class KeyboardController {
+    - keyToMidiMap : Map<Integer, Integer>
+    - synth : Synth
+    - activeNotes : Map<Integer, Integer>
+    - defaultVelocity : double
+    + KeyboardController(synth : Synth)
+    - initializeKeyMap()
+    + setDefaultVelocity(double)
+    + getMidiNoteForKey(int) : int
+    + isNoteMappedKey(int) : boolean
+    + keyPressed(KeyEvent)
+    + keyReleased(KeyEvent)
+    + keyTyped(KeyEvent)
+}
+
+' =========================
+' SYNTH
+' =========================
+class Synth {
+    - voices : SynthVoice[]
+    - synth : Synthesizer
+    - keyboardController : KeyboardController
+    - mainLineOut : LineOut
+    - ui : SynthUI
+    + Synth()
+    + getAvailableVoice() : int
+    + noteOn(int, int, double)
+    + noteOff(voiceIndex : int)
+    + getVoices() : SynthVoice[]
+    + getKeyboardController() : KeyboardController
+    + start()
+    + stop()
+    + main(String[])
+}
+
+' =========================
+' SYNTHUI
+' =========================
+class SynthUI {
+    - frame : JFrame
+    - synth : Synth
+    - keyboardController : KeyboardController
+    - ADSRPanel : JPanel
+    - oscTypePanel : JPanel
+    - mainPanel : JPanel
+    - sineButton : JButton
+    - squareButton : JButton
+    - sawtoothButton : JButton
+    - triangleButton : JButton
+    - attackSlider : JSlider
+    - decaySlider : JSlider
+    - sustainSlider : JSlider
+    - releaseSlider : JSlider
+    + SynthUI(Synth, KeyboardController)
+    - initializeWindow()
+    - createOscillatorButton(String, OscType) : JButton
+    - createSlider(String, double) : JSlider
+    + getFrame() : JFrame
+    + show()
+}
+
+' =========================
+' SYNTHVOICE
+' =========================
+class SynthVoice extends UnitGenerator {
+    - oscillator : UnitOscillator
+    - synth : Synthesizer
+    - currentOscType : OscType
+    - isActive : boolean
+    - envelope : Envelope
+    - lineOut : LineOut
+    - mixer : Add
+    - filter : Filter
+    - currentNote : int
+    + SynthVoice(Synthesizer, LineOut)
+    + generate(int, int)
+    - initComponents(Synthesizer)
+    - connectComponents()
+    - createOsc(OscType) : UnitOscillator
+    + setCurrentOscType(OscType)
+    + triggerNoteOn(int, double)
+    + triggerNoteOff()
+    + isActive() : boolean
+    + getCurrentNote() : int
+    + getCurrentOscType() : OscType
+    + getEnvelope() : Envelope
+    + retriggerEnvelope()
+    + refreshSignalChain()
+}
+
+' =========================
+' RELATIONSHIPS
+' =========================
+Synth "1" o-- "8" SynthVoice : manages
+Synth "1" o-- "1" KeyboardController : owns
+Synth "1" o-- "1" SynthUI : owns
+SynthVoice "1" o-- "1" Envelope : has
+SynthVoice "1" o-- "1" Filter : has
+SynthVoice "1" o-- "1" LineOut : uses
+SynthVoice "1" o-- "1" OscType : uses
+SynthVoice "1" o-- "1" Add : uses
+KeyboardController "1" --> "1" Synth : controls
+SynthUI "1" --> "1" Synth : controls
+SynthUI "1" --> "1" KeyboardController : uses
+Envelope "1" o-- "1" EnvelopeDAHDSR : uses
+Filter "1" o-- "1" FilterStateVariable : uses
+Filter "1" o-- "1" LinearRamp : uses
+
+@enduml
